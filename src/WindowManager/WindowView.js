@@ -1,5 +1,8 @@
 class WindowView {
     constructor() {
+        /**
+         * @type {WindowManager}
+         */
         this.windowManager = null
     }
 

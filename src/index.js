@@ -2,6 +2,10 @@ const readline = require('readline');
 const BufferedKeyListener = require('./KeyListener/BufferedKeyListener')
 const WindowManager = require('./WindowManager/WindowManager')
 const SampleView = require("./WindowViews/SampleView");
+const SampleViewV2 = require("./WindowViews/SampleViewV2");
+const TaskBoardView = require('./WindowViews/TaskBoardView')
+const Task = require("./Tasks/Task");
+const TaskDetailView = require("./WindowViews/TaskDetailView");
 
 // TODO remove if it will be unnecessary
 function isAlphaNumericChar (charStr) {
@@ -30,42 +34,18 @@ function isAlphaNumericChar (charStr) {
     return false;
 }
 
-function clearAllOutput() {
-    process.stdout.write('\x1Bc')
-}
-
 async function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
-function renderTaskList(selectedTaskIndex = 0) {
-    const tasks = [
-        '#1 TODO first task',
-        '#2 TODO second task',
-        '#3 TODO third task',
-    ];
-
-    tasks.forEach((task, index) => {
-        let message = index === selectedTaskIndex ? '* ' : '  '
-        message += task
-        console.log(message)
-    })
-}
-
 async function main () {
-    console.log('Console log');
-
-    process.stdout.write('process stdout write\n');
+    console.log('Starting task board by Andrey Sementsov...');
 
     await delay(1500); // waiting 1.5 second.
 
-    clearAllOutput();
-
-    let selectedTaskIndex = 0;
-
-//    const keyListener = new KeyListener();
     const keyListener = new BufferedKeyListener();
 
+    // TODO move this commented code to example docs
 //    keyListener.onUp(() => console.log('onUp called'))
 //    keyListener.onDown(() => console.log('onDown called'))
 //    keyListener.onLeft(() => console.log('onLeft called'))
@@ -80,50 +60,49 @@ async function main () {
 //        }
 //    })
 
-    // keyListener.onUp(() => {
-    //     if (selectedTaskIndex > 0) {
-    //         selectedTaskIndex--
-    //     }
-    //     clearAllOutput();
-    //     renderTaskList(selectedTaskIndex);
-    // })
-    // keyListener.onDown(() => {
-    //     if (selectedTaskIndex < 2) {
-    //         selectedTaskIndex++
-    //     }
-    //     clearAllOutput();
-    //     renderTaskList(selectedTaskIndex);
-    // })
-    // keyListener.onInput((str) => {
-    //     if (str === 'q') {
-    //         process.exit(0)
-    //     }
-    // })
-    //
-    // keyListener.start()
-    //
-    // renderTaskList(selectedTaskIndex)
-
 //    await delay(1500); // waiting 1.5 second.
 //
 //    console.log('Finish');
 //
 //    process.exit(1);
 
-    keyListener.onInput((str) => {
-        if (str === 'q') {
-            process.exit(0)
-        }
-    })
-
-    keyListener.start()
-
     const windowManager = new WindowManager()
+
     const sampleView = new SampleView()
+    const sampleViewV2 = new SampleViewV2()
+    const taskBoardView = new TaskBoardView()
+    const taskDetailView = new TaskDetailView()
 
     windowManager.registerView(sampleView, 'sample')
+    windowManager.registerView(sampleViewV2, 'samplev2')
+    windowManager.registerView(taskBoardView, 'task-board-view')
+    windowManager.registerView(taskDetailView, 'task-detail-view')
 
-    windowManager.setActiveView(sampleView)
+    windowManager.setActiveView(taskBoardView)
+
+    // const tasks = []
+    // tasks.push(new Task(1, 'Name1', 'qwe', 'new'))
+    // tasks.push(new Task(2, 'Name2_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'qwe', 'new'))
+    // tasks.push(new Task(3, 'Name3', 'qwe', 'done'))
+    // tasks.push(new Task(4, 'Name4_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'qwe', 'done'))
+    // windowManager.context.tasks = tasks
+
+    // keyListener.onInput((str) => {
+    //     if (str === 'q') {
+    //         process.exit(0)
+    //     }
+    //     // if (str === 'w') {
+    //     //     if (windowManager.currentView === sampleView) {
+    //     //         windowManager.setActiveView(sampleViewV2)
+    //     //         windowManager.render()
+    //     //     } else if (windowManager.currentView === sampleViewV2) {
+    //     //         windowManager.setActiveView(sampleView)
+    //     //         windowManager.render()
+    //     //     }
+    //     // }
+    // })
+    windowManager.registerKeyListener(keyListener)
+    keyListener.start()
 
     windowManager.render()
 }

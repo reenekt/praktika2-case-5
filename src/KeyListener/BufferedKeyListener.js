@@ -39,7 +39,7 @@ class BufferedKeyListener extends KeyListener {
                         this.inputBuffer = this.inputBuffer.slice(0, -1)
                         this.onInputingCb(this.inputBuffer)
                     } else if (key.sequence && key.sequence.length === 1) {
-                        this.inputBuffer += key.name
+                        this.inputBuffer += key.sequence
                         this.onInputingCb(this.inputBuffer)
                     }
                 } else {
