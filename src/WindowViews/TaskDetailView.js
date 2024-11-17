@@ -275,6 +275,20 @@ class TaskDetailView extends WindowView {
             return
         }
     }
+
+    getFirstTaskIdInListByIndex (listName = 'all') {
+        const entries = Object.entries(this.windowManager.context.taskIndexById[listName])
+
+        if (entries.length === 0) {
+            return null
+        }
+
+        return entries.sort((a, b) => {
+            if (a[1] > b[1]) { return 1 }
+            if (a[1] < b[1]) { return -1 }
+            return 0
+        })[0][0]
+    }
 }
 
 module.exports = TaskDetailView
